@@ -1,0 +1,475 @@
+<html>
+<head>
+
+<style>
+body{
+	background-image: url("images/bg.png");
+}
+
+#time{
+	margin: 15% 10%;
+	margin-right: 0%;
+	width: 20%;
+	background-color: #17007c;
+	color: white;
+	font-size: 153%;
+	text-align: center;
+	height: 250px;
+	min-width: 180px;
+}
+
+#time_cur{
+	width: 100%;
+	background-color: #543cba;
+	padding-top: 10%;
+	padding-bottom: 10%;
+	height: 45%;
+}
+
+#cal_today{
+	margin-left: 10%;
+	width: 20%;
+	padding-top: 1.57%;
+	background-color: #ee5400;
+	color: white;
+	font-size: 150%;
+	text-align: center;
+	height: 230px;
+	min-width: 180px;
+
+}
+
+#date{
+	margin-top: 7%;
+	padding-top: 10%;
+	background-color: #ff8f52;
+	font-size: 300%;
+	height: 42%;
+}
+
+#month{
+	padding-top: 1%;
+	padding-bottom: 0%;
+	background-color: #ff8f52;
+	font-size: 110%;
+	height: 26%;
+
+}
+
+#weather{
+	margin-left: 10%;
+	margin-top: 15%;
+	width: 20%;
+	background-color: #00723b;
+	color: white;
+	font-size: 120%;
+	text-align: center;
+	height: 250px;
+	min-width: 180px;
+}
+
+#weather_data{
+	background-color: #1eb06a;
+	padding: 10%;
+	padding-top: 9%;
+	height : 50%;	
+}
+
+#weather_tab{
+	margin: 15%;
+	margin-top: 2%;
+	margin-bottom: 0%;
+	color: white;
+	padding: 2%;
+}
+
+#back {
+    text-decoration: none;
+    font-size: 110%;
+    padding: 0.3%;
+    padding-right: 0.9%;
+    padding-left: 0.9%;
+    margin-left: 45%;
+    color: #585857;
+   
+}
+
+.div-analog {
+    position:absolute;
+    left:31.5%;
+    top:13%;
+}
+
+#second {
+  left: 45%;
+  top: 21%;
+  transform :rotateZ(0deg);
+  -webkit-transform: rotateZ(0deg);
+}
+
+#minute {
+  left: 47.5%;
+  top: 25%;
+  transform :rotateZ(0deg);
+  -webkit-transform: rotateZ(0deg);
+}
+
+#hour {
+  left: 46.5%;
+  top: 35%;
+  transform :rotateZ(0deg);
+  -webkit-transform: rotateZ(0deg);
+}
+
+.hidden{
+  visibility: hidden;
+
+}
+
+#today{
+  background-color: #7c2957;
+  border-radius: 50%;
+  color: white;
+
+}
+
+.sunday{
+	color: #a34077;
+}
+
+#calendar{
+  padding: 4% 30%;
+
+}
+
+td{
+  font-size: 160%;
+  text-align: center;
+  color:#39393a;
+
+}
+
+#w{
+	font-size: 120%;
+	color: white;
+
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+$(document).ready(function()
+{
+   setInterval('digitalClock()', 1000);
+   setInterval('analogClock()', 1000);
+   setInterval('dateDisplay()',1000);
+   build_calendar();
+   dashboard();
+   city(); 
+   setInterval('city()', 300000)  
+
+
+});
+
+function digitalClock()
+ 	{
+ 	  var curTime = new Date();
+  	var curHour = curTime.getHours();
+  	var curMinute = curTime.getMinutes();
+  	var curSecond = curTime.getSeconds();
+
+    var dayTime = curHour < 12 ? "AM" : "PM";
+
+    curHour = curHour > 12 ? curHour - 12 : curHour;
+
+    curHour = curHour == 0 ? 12 : curHour;
+
+  	curMinute = (curMinute < 10 ? "0" : "") + curMinute;
+  	curSecond = (curSecond < 10 ? "0" : "") + curSecond;
+
+  	var finalTime = curHour + " " + curMinute + " ";
+
+  	$("#cursecond").html(curSecond);
+   	$("#time_now").html(finalTime);
+    $("#AP").html(dayTime);
+   	  	
+ }
+
+
+function analogClock()
+  {
+    var curTime = new Date();
+    var curHour = curTime.getHours();
+    var curMinute = curTime.getMinutes();
+    var curSecond = curTime.getSeconds();
+
+    curSecond = curSecond * 6;
+    curHour = curHour * 30 + (curMinute/2);
+    curMinute = curMinute * 6;
+
+    var angle = "rotateZ(" + curMinute +"deg)";
+    $("#minute").css({"-webkit-transform" : angle});
+    $("#minute").css({"transform" : angle});
+
+    angle = "rotateZ(" + curSecond +"deg)";
+    $("#second").css({"-webkit-transform" : angle});
+    $("#second").css({"transform" : angle});
+
+    angle = "rotateZ(" + curHour +"deg)";
+    $("#hour").css({"-webkit-transform" : angle});
+    $("#hour").css({"transform" : angle});      
+ }
+
+function dateDisplay()
+  {
+    var day = new Date();
+    var curDate = day.getDate();
+    var curMonth = day.getMonth();
+    var curYear = day.getFullYear();
+    var curDay = day.getDay();
+
+    curDay = calendar_days[curDay];
+    curMonth = calendar_months[curMonth];
+    var finalDate = curMonth + " " + curYear;
+    $("#date").html(curDate);
+    $("#month").html(finalDate);
+ }
+
+ var calendar_months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+ var calendar_days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+ var month_days = [31,28,31,30,31,30,31,31,30,31,30,31];
+ var month= new Date().getMonth(), year= new Date().getFullYear();
+
+ function build_calendar(){
+
+  var m_days=month_days[month];
+  var firstDay = new Date(year, month, 1);
+  var startingDay = firstDay.getDay();
+  var abc;
+  var date = new Date();
+  var curMonth = date.getMonth();
+  var curYear = date.getFullYear();
+  var curDate = date.getDate();
+
+  var date_string ="<table cellpadding='13' cellspacing=0px><tr><td id='prev' onclick='prev()'>&laquo</td><td colspan='5' style='color:#7c2957'>" + calendar_months[month]+ " "+ year + "</td><td id='next' onclick='next()'>&raquo</tr><tr style='margin-bottom:1px'>" ;
+
+  for(i=0;i<7;i++){
+      date_string = date_string + "<td style='background-color: #c14b8d; color:white'>" + calendar_days[i]+ "</td>";
+  }
+
+  date_string = date_string + "</tr><tr>";
+  
+  if(month==1 && year%4==0){
+    m_days=29;
+  }
+
+  for(abc=0;abc<startingDay;abc++){
+    date_string=date_string+"<td class='hidden'>0</td>";
+  }
+
+  for(i=1;i<=m_days;i++){
+    abc++;
+    if(month==curMonth && year == curYear && i == curDate){
+    	if((abc%7)-1==0)
+    		date_string=date_string+"<td id='today' class='sunday'>"+i+"</td>";
+    	else
+      		date_string=date_string+"<td id='today'>"+i+"</td>";
+    }
+    else{
+    	if((abc%7)-1==0)
+      		date_string=date_string+"<td class='sunday'>"+i+"</td>";
+      	else
+      		date_string=date_string+"<td>"+i+"</td>";
+    }
+    if(abc%7==0){
+      date_string = date_string + "</tr><tr>"
+    }
+  }
+
+  date_string = date_string + "</tr></table>"
+  $("#calendar").html(date_string);
+
+ }
+
+
+ function prev(){
+    month = month-1;
+
+    if(month<0){
+      year=year-1;
+      month=11;
+    }
+
+    var temp = calendar_months[month]+ " "+ year;
+    $("#cal").html(temp);
+    build_calendar();
+ }
+
+  function next(){
+    month = month+1;
+
+    if(month>11){
+      year=year+1;
+      month=0;
+    }
+
+    var temp = calendar_months[month]+ " "+ year;
+    $("#cal").html(temp);
+    build_calendar();
+ } 
+
+function city(){
+
+  var xmlhttp = new XMLHttpRequest();
+  var url="http://ipinfo.io/json";
+  xmlhttp.onreadystatechange=function() {
+ 
+      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          parseJSON(xmlhttp.responseText);
+      }
+      else{console.log("");}
+  }
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+
+}
+
+function parseJSON(response) {
+ 
+    var arr = JSON.parse(response);
+    var city = arr["city"] +", "+ arr["country"];
+    $("#place").html(city);
+    weather(city);
+
+}
+
+function weather(city){
+
+	  var xmlhttp = new XMLHttpRequest();
+	  var url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22"+city+"%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+	  xmlhttp.onreadystatechange=function() {
+	      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+	          parseWJSON(xmlhttp.responseText, city);
+	      }
+	      else{console.log("");}
+	  }
+	  xmlhttp.open("GET", url, true);
+	  xmlhttp.send();
+
+}
+
+function parseWJSON(response, city) {
+
+    var arr = JSON.parse(response);
+    var weather_string = "";
+    var forecast_string = "<table cellpadding='10'><tr><td colspan='4' style='color:white'>Forecast</td></tr><tr style='font-weight: bold; font-size: 110%'><td id='w'>Day</td><td id='w'>High</td><td id='w'>Low</td><td id='w'>Description</td></tr>";
+    var temperature = arr["query"].results.channel.item.condition.temp;
+    var text = arr["query"].results.channel.item.condition.text;
+    var wind = arr["query"].results.channel.wind.speed;
+    var humidity = arr["query"].results.channel.atmosphere.humidity;
+    var pressure = arr["query"].results.channel.atmosphere.pressure;
+	var visibility = arr["query"].results.channel.atmosphere.visibility;
+
+	$("#temp").html(temperature);
+	$("#text").html(text);
+
+	weather_string = city + "<br><span style='font-size:200%'>" + temperature + "</span><span style='font-size: 100%'> &ordmF</span>" + "<br>" + text + "<br><br><div id='deatils' style='font-size: 100%'>Wind Speed: "+wind+" mph<br>Humidity: "+ humidity+ "<br>Pressure: "+ pressure +" in<br>Visibility: "+ visibility +"</div>";
+
+	for(x=0;x<5;x++){
+		forecast_string += "<tr><td id='w'>" + arr["query"].results.channel.item.forecast[x].day + "</td>";
+		forecast_string += "<td id='w'>" + arr["query"].results.channel.item.forecast[x].high + "</td>";
+		forecast_string += "<td id='w'>" + arr["query"].results.channel.item.forecast[x].low + "</td>";
+		forecast_string += "<td id='w'>" + arr["query"].results.channel.item.forecast[x].text + "</td></tr>";
+	}
+
+	forecast_string += "</table>";
+
+	$("#forecast").html(forecast_string);
+	$("#current_weather").html(weather_string);
+}
+
+function dashboard(){
+    $("#clock_tab").hide();
+    $("#calendar_tab").hide();
+    $("#weather_tab").hide();
+    $("#dashboard_div").show();
+
+ }
+
+function display(value){
+    $("#dashboard_div").hide();
+
+    if(value==1){
+      $("#clock_tab").show();
+    }
+
+    else if(value==2){
+      $("#calendar_tab").show();
+    }
+
+    else if(value==3){
+      $("#weather_tab").show();
+    }
+ }
+
+</script>
+</head>
+
+<body>
+<div id="dashboard_div">
+<div id="time"  onclick="display(1)" style="display: inline-block" >
+<div id="time_cur">
+<span id="time_now" style="font-size: 250%"></span><span id="cursecond" style="font-size: 100%"> </span>
+<div id="AP"></div>
+</div>
+<div style="padding: 10%; padding-bottom:0%; font-size: 110%">Clock</div>
+</div>
+
+<div id="cal_today" style="display: inline-block;">
+<div  onclick="display(2)">Today
+<div id="date"></div>
+<div id="month"></div>
+</div>
+</div>
+
+<div id="weather" style="display: inline-block" onclick="display(3)">
+<div id="weather_data" style="font-size: 130%">
+	<div><span id="temp" style="font-size: 200%; margin:1%"></span><span>&ordmF</span></div>
+	<div id="text" style="font-size:80%; margin-bottom: 5%"></div>
+	<div id="place">Islamabad, Pakistan</div>
+</div>
+<div style="padding: 8%;font-size: 120%">Weather</div>
+</div>
+</div>
+
+<div id="clock_tab">
+<div id="clock" class="div-analog"><img src="images/clock.png" width="400px">
+<div id="minute" class="div-analog"><img src="images/min.png" height="200px"> </div>
+<div id="hour" class="div-analog"><img src="images/hour.png" height="120px"> </div>
+<div id="second" class="div-analog"><img src="images/sec.png" height="230px"> </div>
+</div>
+<div style="height:500px">
+</div>
+<button id="back"onclick="dashboard()" style="margin-left:44%">Back</button>
+</div>
+
+<div id="calendar_tab">
+<div id="calendar">
+</div>
+<button id="back" onclick="dashboard()">Back</button>
+</div>
+
+<div id="weather_tab">
+<div style="background-color: #12b89b; border-radius: 25px; min-width: 360px">
+<div id="current_weather" style="display: inline-block; padding: 5%; margin: 5%;font-size: 125%; margin-bottom:0%">
+</div>
+<div id="forecast" style="display: inline-block; padding: 5%; margin: 2%;margin-bottom:0%">
+</div>
+<button id="back" onclick="dashboard()" style="margin-bottom: 4%;">Back</button>
+</div>
+</div>
+
+</body>
+<html>
